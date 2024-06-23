@@ -29,8 +29,10 @@ urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('login', views.login),
-    path('register', views.register),
-    path('logout', views.logout),
-    path('test_token', views.test_token)
+    path('api/login', views.login),
+    path('api/register', views.register),
+    path('api/logout', views.logout),
+    path('api/test_token', views.test_token),
+    path('api/profile', views.profile)
+    # path('kot/<int:pk>', UpdateKot.as_view(), name='update_kot')
 ]

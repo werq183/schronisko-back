@@ -1,5 +1,6 @@
 from django.contrib.auth.models import Group, User
 from rest_framework import serializers, validators
+from app.models import UserProfile
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,6 +19,11 @@ class UserSerializer(serializers.ModelSerializer):
                 ]
             }
         }
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['adres_1', 'adres_2', 'nr_tel'] # 'user'
 
 # OOTB
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
