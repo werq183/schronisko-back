@@ -34,5 +34,5 @@ class Zdjecie(models.Model):
 
 class Rezerwacja(models.Model):
     uzytkownik = models.ForeignKey(User, on_delete=models.CASCADE)
-    ogloszenie = models.ForeignKey(Ogloszenie, on_delete=models.CASCADE)
+    ogloszenie = models.OneToOneField(Ogloszenie, on_delete=models.CASCADE)
     data = models.DateTimeField()

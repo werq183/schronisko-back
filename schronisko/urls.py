@@ -33,6 +33,9 @@ urlpatterns = [
     path('api/register', views.register),
     path('api/logout', views.logout),
     path('api/test_token', views.test_token),
-    path('api/profile', views.profile)
+    path('api/profile', views.profile),
+    path('api/ogloszenia', views.list_ogloszenia_with_details),
+    path('api/ogloszenia/<int:pk>', views.get_ogloszenie_by_id),
+    path('api/rezerwacja', views.reserve)
     # path('kot/<int:pk>', UpdateKot.as_view(), name='update_kot')
 ]

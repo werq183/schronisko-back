@@ -6,8 +6,8 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
-from app.models import UserProfile
-from app.serializers import GroupSerializer, UserSerializer, UserProfileSerializer
+from app.models import UserProfile, Ogloszenie
+from app.serializers import GroupSerializer, UserSerializer, UserProfileSerializer, OgloszenieSerializer, RezerwacjaSerializer
 
 # OOTB
 class UserViewSet(viewsets.ModelViewSet):
@@ -57,12 +57,12 @@ def logout(request):
     token.delete()
     return Response({"success": True, "detail": "Logged out!"}, status=status.HTTP_200_OK)
 
-# idk czy potrzebne, wyglada na opcje ponownego otrzymania tokenu np na podstawie sesji, jesli poprzedni wygasl 
+# check whose auth token it is
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def test_token(request):
-    return Response({"success": True, "user": [request.user.username, request.user.pk]})
+    return Response({"username": request.user.username, "pk": request.user.pk})
 
 # the following will create/update profile, regardless if it exists (try - catch)
 # @api_view(['POST'])
@@ -116,13 +116,27 @@ def profile(request):
         return Response({"detail": "Not found."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# @api_view(['POST'])
-# @authentication_classes([SessionAuthentication, TokenAuthentication])
-# @permission_classes([permissions.IsAuthenticated])
-# def update_kot(request):
-#     return Response("test")
+@api_view(['GET'])
+def list_ogloszenia_with_details(request):
+    try:
+        ogloszenia = Ogloszenie.objects.all().prefetch_related('zdjecie_set').select_related('kot')
+        serializer = OgloszenieSerializer(ogloszenia, many=True)
+        return Response(serializer.data)
+    except Ogloszenie.DoesNotExist:
+        return Response({"detail": "Not found."}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+def get_ogloszenie_by_id(request, pk):
+    ogloszenie = get_object_or_404(Ogloszenie, pk=pk)
+    serializer = OgloszenieSerializer(ogloszenie)
+    return Response(serializer.data)
 
-# class UpdateKot(generics.RetrieveUpdateAPIView):
-#     queryset = Kot.objects.all()
-#     serializer_class = KotSerializer
-#     # permission_classes = [permissions.IsAuthenticated]
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def reserve(request):
+    serializer = RezerwacjaSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(uzytkownik=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
