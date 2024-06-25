@@ -29,7 +29,7 @@ class Ogloszenie(models.Model):
 
 class Zdjecie(models.Model):
     ogloszenie = models.ForeignKey(Ogloszenie, on_delete=models.CASCADE)
-    dane = models.ImageField(upload_to='zdjecia/')
+    dane = models.ImageField(upload_to='')
 
 
 class Rezerwacja(models.Model):
