@@ -5,25 +5,26 @@ from app.models import UserProfile, Ogloszenie, Kot, Zdjecie, Rezerwacja
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'email']
+        fields = ['id', 'username', 'email']  # Usuwam 'password', bo nie chcemy go eksponować
         extra_kwargs = {
             "id": {"read_only": True},
-            "password": {"write_only": True},
             "email": {
                 "required": True,
                 "allow_blank": False,
                 "validators": [
                     validators.UniqueValidator(
-                        User.objects.all(), f"A user with that Email already exists."
+                        queryset=User.objects.all(), message="A user with that email already exists."
                     )
                 ]
             }
         }
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)  # Dołączamy dane użytkownika
+
     class Meta:
         model = UserProfile
-        fields = ['adres_1', 'adres_2', 'nr_tel'] # 'user'
+        fields = ['user', 'adres_1', 'adres_2', 'nr_tel']
         
 class KotSerializer(serializers.ModelSerializer):
     class Meta:
