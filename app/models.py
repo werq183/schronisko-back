@@ -25,6 +25,7 @@ class Ogloszenie(models.Model):
     kot = models.ForeignKey(Kot, on_delete=models.CASCADE)
     opis = models.TextField()
     data = models.DateTimeField()
+    is_reserved = models.BooleanField(default=False)
 
 
 class Zdjecie(models.Model):
