@@ -18,6 +18,8 @@ from django.urls import include, path
 from rest_framework import routers
 from django.contrib import admin
 from app import views
+from django.conf.urls.static import static
+from django.conf import settings
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -39,3 +41,5 @@ urlpatterns = [
     path('api/rezerwacja', views.reserve)
     # path('kot/<int:pk>', UpdateKot.as_view(), name='update_kot')
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
