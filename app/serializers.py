@@ -33,7 +33,13 @@ class KotSerializer(serializers.ModelSerializer):
 class ZdjecieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Zdjecie
-        fields = '__all__'
+        fields = 'all'
+
+    def get_dane(self, obj):
+        request = self.context.get('request')
+        if obj.dane:
+            return request.build_absolute_uri(obj.dane.url)
+        return None
    
 class OgloszenieSerializer(serializers.ModelSerializer):
     kot = KotSerializer()

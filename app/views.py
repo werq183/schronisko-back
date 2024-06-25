@@ -46,6 +46,14 @@ def register(request):
         user.set_password(request.data['password'])
         user.save()
         token = Token.objects.create(user=user)
+        profile_data = {
+            "adres_1": "",
+            "adres_2": "",
+            "nr_tel": ""
+        }
+        profile_serializer = UserProfileSerializer(data=profile_data)
+        if profile_serializer.is_valid():
+            profile_serializer.save(user=user)
         return Response({"token": token.key, "user": serializer.data})
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -120,7 +128,7 @@ def profile(request):
 def list_ogloszenia_with_details(request):
     try:
         ogloszenia = Ogloszenie.objects.all().prefetch_related('zdjecie_set').select_related('kot')
-        serializer = OgloszenieSerializer(ogloszenia, many=True)
+        serializer = OgloszenieSerializer(ogloszenia, many=True, context={'request': request})
         return Response(serializer.data)
     except Ogloszenie.DoesNotExist:
         return Response({"detail": "Not found."}, status=status.HTTP_400_BAD_REQUEST)
