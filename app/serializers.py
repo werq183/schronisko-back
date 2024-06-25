@@ -31,6 +31,8 @@ class KotSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ZdjecieSerializer(serializers.ModelSerializer):
+    dane = serializers.SerializerMethodField()  # Używamy SerializerMethodField
+
     class Meta:
         model = Zdjecie
         fields = '__all__'

@@ -136,8 +136,9 @@ def list_ogloszenia_with_details(request):
 @api_view(['GET'])
 def get_ogloszenie_by_id(request, pk):
     ogloszenie = get_object_or_404(Ogloszenie, pk=pk)
-    serializer = OgloszenieSerializer(ogloszenie)
+    serializer = OgloszenieSerializer(ogloszenie, context={'request': request})  # Dodaj context
     return Response(serializer.data)
+
 
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
