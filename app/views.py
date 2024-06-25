@@ -140,12 +140,31 @@ def get_ogloszenie_by_id(request, pk):
     return Response(serializer.data)
 
 
-@api_view(['POST'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def reserve(request):
-    serializer = RezerwacjaSerializer(data=request.data)
+#@api_view(['POST'])
+#@authentication_classes([SessionAuthentication, TokenAuthentication])
+#@permission_classes([permissions.IsAuthenticated])
+#def reserve(request,pk):
+#    serializer = RezerwacjaSerializer(data=request.data)
+#    if serializer.is_valid():
+#        ogloszenie = Ogloszenie.objects.filter(id=pk).first()
+#        ogloszenie.is_reserved=True
+#        ogloszenie.save()
+#        serializer.save(uzytkownik=request.user, ogloszenie=)
+#        return Response(serializer.data, status=status.HTTP_201_CREATED)
+#    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+def reserve(request, pk):
+    ogloszenie = Ogloszenie.objects.filter(id=pk).first()
+    if not ogloszenie:
+        return Response({'error': 'Ogłoszenie not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    if ogloszenie.is_reserved:
+        return Response({'error': 'Ogłoszenie is already reserved'}, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = RezerwacjaSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
-        serializer.save(uzytkownik=request.user)
+        ogloszenie.is_reserved = True
+        ogloszenie.save()
+        serializer.save(ogloszenie=ogloszenie, uzytkownik=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

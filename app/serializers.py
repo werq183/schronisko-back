@@ -57,7 +57,7 @@ class OgloszenieSerializer(serializers.ModelSerializer):
 class RezerwacjaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rezerwacja
-        fields = ['ogloszenie', 'data'] # 'user'
+        fields = ['ogloszenie', 'data', 'uzytkownik'] # 'user'
 
 # OOTB
 class GroupSerializer(serializers.HyperlinkedModelSerializer):

@@ -152,3 +152,4 @@ cython_debug/
 #.idea/
 test.json
 zdjecia/
+.idea
