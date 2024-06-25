@@ -33,7 +33,7 @@ class KotSerializer(serializers.ModelSerializer):
 class ZdjecieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Zdjecie
-        fields = 'all'
+        fields = '__all__'
 
     def get_dane(self, obj):
         request = self.context.get('request')
