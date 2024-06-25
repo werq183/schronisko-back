@@ -38,7 +38,7 @@ urlpatterns = [
     path('api/profile', views.profile),
     path('api/ogloszenia', views.list_ogloszenia_with_details),
     path('api/ogloszenia/<int:pk>', views.get_ogloszenie_by_id),
-    path('api/rezerwacja/<int:pk>', views.reserve)
+    path('api/rezerwacja', views.reserve)
     # path('kot/<int:pk>', UpdateKot.as_view(), name='update_kot')
 ]
 

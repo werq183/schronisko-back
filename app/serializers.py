@@ -54,10 +54,21 @@ class OgloszenieSerializer(serializers.ModelSerializer):
     def get_is_reserved(self, obj):
         return Rezerwacja.objects.filter(ogloszenie=obj).exists()
 
+'''class RezerwacjaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rezerwacja
+        fields = ['ogloszenie', 'data', 'user'] # 'user'''''
+
 class RezerwacjaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rezerwacja
-        fields = ['ogloszenie', 'data', 'uzytkownik'] # 'user'
+        fields = ['ogloszenie']
+
+    def create(self, validated_data):
+        ogloszenie = self.context['ogloszenie']
+        user = self.context['user']
+        return Rezerwacja.objects.create(ogloszenie=ogloszenie, uzytkownik=user, **validated_data)
+
 
 # OOTB
 class GroupSerializer(serializers.HyperlinkedModelSerializer):

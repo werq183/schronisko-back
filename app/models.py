@@ -24,7 +24,7 @@ class Kot(models.Model):
 class Ogloszenie(models.Model):
     kot = models.ForeignKey(Kot, on_delete=models.CASCADE)
     opis = models.TextField()
-    data = models.DateTimeField()
+    data = models.DateTimeField(auto_now_add=True)
     is_reserved = models.BooleanField(default=False)
 
 
@@ -36,4 +36,4 @@ class Zdjecie(models.Model):
 class Rezerwacja(models.Model):
     uzytkownik = models.ForeignKey(User, on_delete=models.CASCADE)
     ogloszenie = models.OneToOneField(Ogloszenie, on_delete=models.CASCADE)
-    data = models.DateTimeField()
+    data = models.DateTimeField(auto_now_add=True)

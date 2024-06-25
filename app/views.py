@@ -6,7 +6,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
-from app.models import UserProfile, Ogloszenie
+from app.models import UserProfile, Ogloszenie, Rezerwacja
 from app.serializers import GroupSerializer, UserSerializer, UserProfileSerializer, OgloszenieSerializer, RezerwacjaSerializer
 
 # OOTB
@@ -153,18 +153,25 @@ def get_ogloszenie_by_id(request, pk):
 #        return Response(serializer.data, status=status.HTTP_201_CREATED)
 #    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def reserve(request, pk):
-    ogloszenie = Ogloszenie.objects.filter(id=pk).first()
-    if not ogloszenie:
-        return Response({'error': 'Ogłoszenie not found'}, status=status.HTTP_404_NOT_FOUND)
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def reserve(request):
+    print(request.data)
+    ogloszenie = get_object_or_404(Ogloszenie, pk=request.data["ogloszenie"])
 
     if ogloszenie.is_reserved:
         return Response({'error': 'Ogłoszenie is already reserved'}, status=status.HTTP_400_BAD_REQUEST)
 
-    serializer = RezerwacjaSerializer(data=request.data, context={'request': request})
-    if serializer.is_valid():
+    #serializer = RezerwacjaSerializer(data=request.data,ogloszenie=ogloszenie, user=request.user)
+    #serializer = RezerwacjaSerializer(context={'ogloszenie': ogloszenie, 'user': request.user})
+    #if serializer.is_valid():
+    try:
         ogloszenie.is_reserved = True
         ogloszenie.save()
-        serializer.save(ogloszenie=ogloszenie, uzytkownik=request.user)
+        rezerwacja = Rezerwacja.objects.create(uzytkownik=request.user, ogloszenie=ogloszenie)
+        rezerwacja.save()
+        serializer = RezerwacjaSerializer(rezerwacja)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
